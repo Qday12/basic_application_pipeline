@@ -37,3 +37,18 @@ output "ecr_registry_url" {
   description = "Full ECR registry URL (for use in GitHub Actions)"
   value       = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com"
 }
+
+output "helm_repository_url" {
+  description = "URL of the ECR repository for Helm charts"
+  value       = aws_ecr_repository.helm_repository.repository_url
+}
+
+output "helm_repository_name" {
+  description = "Name of the Helm chart repository"
+  value       = aws_ecr_repository.helm_repository.name
+}
+
+output "helm_repository_arn" {
+  description = "ARN of the Helm chart repository"
+  value       = aws_ecr_repository.helm_repository.arn
+}

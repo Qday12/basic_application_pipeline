@@ -17,9 +17,15 @@ variable "environment" {
 }
 
 variable "ecr_repository_name" {
-  description = "Name of the ECR repository for Docker images and Helm charts"
+  description = "Name of the ECR repository for Docker images"
   type        = string
   default     = "hello-flask-app"
+}
+
+variable "helm_chart_name" {
+  description = "Name of the ECR repository for Helm charts"
+  type        = string
+  default     = "hello-chart"
 }
 
 variable "ecr_push_role_name" {

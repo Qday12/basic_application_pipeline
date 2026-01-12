@@ -33,6 +33,47 @@ resource "aws_ecr_repository" "app_repository" {
   }
 }
 
+# ECR Repository for Helm Charts
+resource "aws_ecr_repository" "helm_repository" {
+  name                 = var.helm_chart_name
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+
+  encryption_configuration {
+    encryption_type = "AES256"
+  }
+
+  tags = {
+    Project     = var.project_name
+    Environment = var.environment
+    ManagedBy   = "Terraform"
+  }
+}
+
+# ECR Repository Lifecycle Policy - Keep only last 10 Helm chart versions
+resource "aws_ecr_lifecycle_policy" "helm_repository_policy" {
+  repository = aws_ecr_repository.helm_repository.name
+
+  policy = jsonencode({
+    rules = [
+      {
+        rulePriority = 1
+        description  = "Keep last 10 chart versions"
+        selection = {
+          tagStatus     = "any"
+          countType     = "imageCountMoreThan"
+          countNumber   = 10
+        }
+        action = {
+          type = "expire"
+        }
+      }
+    ]
+  })
+}
 
 # Data source to get current AWS account ID
 data "aws_caller_identity" "current" {}
@@ -99,7 +140,10 @@ resource "aws_iam_role_policy" "ecr_push_policy" {
           "ecr:CompleteLayerUpload",
           "ecr:PutImage"
         ]
-        Resource = aws_ecr_repository.app_repository.arn
+        Resource = [
+          aws_ecr_repository.app_repository.arn,
+          aws_ecr_repository.helm_repository.arn
+        ]
       }
     ]
   })
