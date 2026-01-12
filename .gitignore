@@ -1,0 +1,8 @@
+a_local/
+CLAUDE.md
+.claude
+
+#terraform
+*.tfstate
+*.tfstate.backup
+.terraform/
