@@ -1,4 +1,4 @@
-# secrets: AWS_ACCOUNT_ID, AWS_ROLE_ARN_ECR_PUSH
+# secrets: AWS_ROLE_ARN_ECR_PUSH
 
 name: CI/CD
 
@@ -9,7 +9,7 @@ on:
     branches: [main]
 
 env:
-  ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com
+  ECR_REGISTRY: 408502715963.dkr.ecr.eu-central-1.amazonaws.com
   IMAGE_NAME: hello-flask-app
   HELM_CHART_NAME: hello-chart
   AWS_REGION: eu-central-1
@@ -54,7 +54,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN_ECR_PUSH }}
-          aws-region: $AWS_REGION
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -84,7 +84,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN_ECR_PUSH }}
-          aws-region: $AWS_REGION
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -116,11 +116,11 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN_ECR_PUSH }}
-          aws-region: $AWS_REGION
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Configure kubectl
         run: |
-          aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_REGION
+          aws eks update-kubeconfig --name ${{ env.CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
 
       - name: Install Helm
         uses: azure/setup-helm@v3
